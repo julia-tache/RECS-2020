@@ -1,5 +1,5 @@
 ---
-title: "2023 FEVS OCS Indices"
+title: "2020 RECS Graphs"
 output: html_document
 date: "2024-01-31"
 ---
@@ -11,6 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load packages}
 
 library(tidyverse)
+library(extrafont)
+library(formattable)
+loadfonts(device = "win")
 
 ```
 
@@ -39,6 +42,9 @@ race2 <- data.frame(race_cat = c("Black", "Hispanic", "Asian", "AI/AN"),
            se = c(0.0013, 0.0008, 0.0022, 0.001),
            legend_column = "Share of Energy Insecure Households", "Share of Energy Insecure Households", "Share of Energy Insecure Households", "Share of Energy Insecure Households")
 
+income <- data.frame(inc_cat = c("$19,999 or less", "$20,000-$39,999", "$40,000-$59,999", "$60,000-$99,999", "$100,000+"),
+           home_insecurity_perc = c(0.515, 0.397, 0.293, 0.201, 0.092))
+
 ```
 
 
@@ -47,162 +53,190 @@ race2 <- data.frame(race_cat = c("Black", "Hispanic", "Asian", "AI/AN"),
 ##age
 
 ggplot(house_age, aes(x = factor(year_of_construction, level = c("<1950", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010-15", "2016-20")), y = home_insecurity_perc, label = scales::percent(home_insecurity_perc, accuracy = 0.1))) +
-  geom_point(color = "dark green", size = 3) +
+  geom_point(color = "#439381", size = 3) +
   geom_text(position = position_dodge(width = 0.9),
             vjust = 3,
             size = 4,
-            color = "dark green",
+            color = "#439381",
             fontface = "bold",
-            family = "mono") +
-  labs(title = "\nPercent of Households Facing Energy Insecurity vs.\nDecade Home was Constructed (2020)\n",
-       subtitle = "Individuals and families who live in older homes are more likely to\nexperience higher home energy burdens.",
+            family = "Georgia") +
+  labs(title = "\nPercent of Households Facing Energy Insecurity vs.\nDecade Home was Constructed (2020)",
+       subtitle = "Individuals and families who live in older homes are more likely to experience energy insecurity.",
        caption = "\nJulia Tache | Analysis of RECS Survey Data (2020)") +
   ylab("Percent Positive") +
   scale_y_continuous(limits = c(0.19, 0.32), labels = scales::percent) +
-  theme(plot.background = element_rect(fill = "#eae5df"),
+  theme(plot.background = element_rect(fill = "#F5F5F5"),
         plot.title = element_text(face = "bold", size = 16),
-        plot.caption = element_text(face = "italic"),
+        plot.subtitle = element_text(size = 12),
+        plot.caption = element_text(size = 12, face = "italic"),
         axis.title.x = element_blank(),
-        axis.text.x = element_text(color = "black"),
+        axis.text.x = element_text(color = "black", size = 11),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black", size = 11),
         legend.position = "none",
-        text = element_text(family = "mono"))
+        text = element_text(family = "Georgia"))
 
 ggsave("house_age.png", height = 5, width = 8)
 
 ##insulation
 
 ggplot(insulation, aes(x = factor(insulation_type, level = c("Well-Insulated", "Adequately Insulated", "Poorly Insulated", "No Insulation")), y = insecurity_households_n, fill = legend_column)) +
-  geom_bar(aes(fill = legend_column), stat = "identity") +
-  scale_fill_manual(values = c("#90cf83")) +
   geom_bar(aes(y = insulation_households_n), stat = "identity", size = 1, color = "#e4fde1", fill = "#e4fde1", alpha = 0.5) +
+  geom_bar(aes(fill = legend_column), stat = "identity") +
+  scale_fill_manual(values = c("#439381")) +
   geom_text(aes(x = factor(insulation_type, level = c("Well-Insulated", "Adequately Insulated", "Poorly Insulated", "No Insulation")),
                            y = insecurity_households_n,
                            label = scales::percent(home_insecurity_perc, accuracy = 0.1)),
             position = position_dodge(width = 0.9),
             size = 3.25,
             vjust = 1.75,
-            color = "dark green",
+            color = "black",
             fontface = "bold",
-            family = "mono") +
+            family = "Georgia") +
     geom_text(aes(x = factor(insulation_type, level = c("Well-Insulated", "Adequately Insulated", "Poorly Insulated", "No Insulation")),
                            y = insulation_households_n,
                            label = paste0(insulation_households_n, "m")),
             position = position_dodge(width = 0.9),
             size = 4,
             vjust = -0.9,
-            color = "dark green",
+            color = "black",
             fontface = "bold",
-            family = "mono") +
+            family = "Georgia") +
   ylim(0, 70) +
-  labs(title = "\nHousehold Level of Insulation: National Snapshot (2020)\n",
+  labs(title = "\nHousehold Level of Insulation: National Snapshot (2020)",
        subtitle = "Most Americans surveyed live in households with adequate insulation.\nProper insulation and weatherization play a huge role in ensuring\nefficient home heating and cooling.",
        caption = "\nJulia Tache | Analysis of RECS Survey Data (2020)") +
   ylab("Number of Housing Units (millions)") +
-  theme(plot.background = element_rect(fill = "#eae5df"),
-        plot.title = element_text(face = "bold", size = 14),
-        plot.caption = element_text (face = "italic"),
+  theme(plot.background = element_rect(fill = "#F5F5F5"),
+        plot.title = element_text(face = "bold", size = 16),
+        plot.subtitle = element_text(size = 12),
+        plot.caption = element_text (size = 12, face = "italic"),
         axis.title.x = element_blank(),
-        axis.text.x = element_text(color = "black"),
-        axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.text.x = element_text(color = "black", size = 10),
+        axis.title.y = element_text(size = 11),
+        axis.text.y = element_text(face = "bold", color = "black", size = 11),
         legend.position = "top",
-        legend.background = element_rect(fill = "#eae5df"),
+        legend.background = element_rect(fill = "#F5F5F5"),
         legend.title = element_blank(),
-        legend.text = element_text(face = "italic"),
-        text = element_text(family = "mono"))
+        legend.text = element_text(size = 10, face = "italic"),
+        text = element_text(family = "Georgia"))
 
 ggsave("insulation.png", height = 5, width = 8)
 
 ## race
 
 ggplot(race1, aes(x = factor(race_cat, level = c("White", "Total")), y = insecurity_households_n, fill = legend_column)) +
-  geom_bar(aes(fill = legend_column), stat = "identity") +
-  scale_fill_manual(values = c("#90cf83")) +
   geom_bar(aes(y = insulation_households_n), stat = "identity", size = 1, color = "#e4fde1", fill = "#e4fde1", alpha = 0.5) +
+  geom_bar(aes(fill = legend_column), stat = "identity") +
+  scale_fill_manual(values = c("#439381")) +
   geom_text(aes(x = factor(race_cat, level = c("White", "Total")),
                            y = insecurity_households_n,
                            label = scales::percent(home_insecurity_perc, accuracy = 0.1)),
             position = position_dodge(width = 0.9),
             hjust = 1.25,
-            size = 4,
-            color = "dark green",
+            size = 5,
+            color = "black",
             fontface = "bold",
-            family = "mono") +
+            family = "Georgia") +
     geom_text(aes(x = factor(race_cat, level = c("White", "Total")),
                            y = insulation_households_n,
                            label = paste0(insulation_households_n, "m")),
             position = position_dodge(width = 0.9),
             size = 5,
             hjust = -0.1,
-            color = "dark green",
+            color = "black",
             fontface = "bold",
-            family = "mono") +
+            family = "Georgia") +
   coord_flip() +
-  labs(title = "\nPercent of Households Experiencing Energy Insecurity\n(Total vs. White Households) (2020)\n",
+  labs(title = "\nPercent of Households Experiencing Energy Insecurity\n(Total vs. White Households) (2020)",
        subtitle = "Estimates from the Residential Energy Consumption Survey (RECS)",
        caption = "\nJulia Tache | Analysis of RECS Survey Data (2020)") +
   ylab("Number of Housing Units (millions)") +
   ylim(0, 150) +
-  theme(plot.background = element_rect(fill = "#eae5df"),
-        plot.title = element_text(face = "bold", size = 12, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5),
-        plot.caption = element_text (face = "italic"),
-        axis.title.x = element_text(size = 10),
-        axis.text.x = element_text(color = "black"),
+  theme(plot.background = element_rect(fill = "#F5F5F5"),
+        plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text (size = 12, face = "italic"),
+        axis.title.x = element_text(size = 11),
+        axis.text.x = element_text(color = "black", size = 11),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black", size = 11),
         legend.position = "top",
-        legend.background = element_rect(fill = "#eae5df"),
+        legend.background = element_rect(fill = "#F5F5F5"),
         legend.title = element_blank(),
-        legend.text = element_text(face = "italic"),
-        text = element_text(family = "mono"))
+        legend.text = element_text(size = 10, face = "italic"),
+        text = element_text(family = "Georgia"))
 
 ggsave("race1.png", height = 5, width = 8)
 
 ggplot(race2, aes(x = factor(race_cat, level = c("AI/AN", "Asian", "Black", "Hispanic")), y = insecurity_households_n, fill = legend_column)) +
-  geom_bar(aes(fill = legend_column), stat = "identity") +
-  scale_fill_manual(values = c("#90cf83")) +
   geom_bar(aes(y = insulation_households_n), stat = "identity", size = 1, color = "#e4fde1", fill = "#e4fde1", alpha = 0.5) +
+  geom_bar(aes(fill = legend_column), stat = "identity") +
+  scale_fill_manual(values = c("#439381")) +
   geom_text(aes(x = factor(race_cat, level = c("AI/AN", "Asian", "Black", "Hispanic")),
                            y = insecurity_households_n,
                            label = scales::percent(home_insecurity_perc, accuracy = 0.1)),
             position = position_dodge(width = 0.9),
-            hjust = 1.1,
-            size = 3,
-            color = "dark green",
+            hjust = 1,
+            size = 4,
+            color = "black",
             fontface = "bold",
-            family = "mono") +
+            family = "Georgia") +
     geom_text(aes(x = factor(race_cat, level = c("AI/AN", "Asian", "Black", "Hispanic")),
                            y = insulation_households_n,
                            label = paste0(insulation_households_n, "m")),
             position = position_dodge(width = 0.9),
             size = 4,
-            hjust = -0.1,
-            color = "dark green",
+            hjust = -0.01,
+            color = "black",
             fontface = "bold",
-            family = "mono") +
+            family = "Georgia") +
   coord_flip() +
   ylim(0, 15) +
-  labs(title = "\nPercent of Households Experiencing Energy\nInsecurity by Race (2020)\n",
-       subtitle = "Nearly half of Hispanic, Black, and American Indian/American Native\n(AI/AN) households experience some level of energy insecurity.\nEstimates from the Residential Energy Consumption Survey (RECS)",
+  labs(title = "\nPercent of Households Experiencing Energy\nInsecurity by Race (2020)",
+       subtitle = "Nearly half of Hispanic, Black, and American Indian/Alaska Native\n(AI/AN) households experience some level of energy insecurity.\nEstimates from the Residential Energy Consumption Survey (RECS)",
        caption = "\nJulia Tache | Analysis of RECS Survey Data (2020)") +
   ylab("Number of Housing Units (millions)") +
-  theme(plot.background = element_rect(fill = "#eae5df"),
-        plot.title = element_text(face = "bold", size = 12, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5),
-        plot.caption = element_text (face = "italic"),
-        axis.title.x = element_text(size = 10),
-        axis.text.x = element_text(color = "black"),
+  theme(plot.background = element_rect(fill = "#F5F5F5"),
+        plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text (size = 12, face = "italic"),
+        axis.title.x = element_text(size = 11),
+        axis.text.x = element_text(color = "black", size = 11),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(face = "bold", color = "black"),
+        axis.text.y = element_text(face = "bold", color = "black", size = 11),
         legend.position = "top",
-        legend.background = element_rect(fill = "#eae5df"),
+        legend.background = element_rect(fill = "#F5F5F5"),
         legend.title = element_blank(),
-        legend.text = element_text(face = "italic"),
-        text = element_text(family = "mono"))
+        legend.text = element_text(size = 10, face = "italic"),
+        text = element_text(family = "Georgia"))
 
 ggsave("race2.png", height = 5, width = 8)
+
+##income
+
+ggplot(income, aes(x = factor(inc_cat, level = c("$19,999 or less", "$20,000-$39,999", "$40,000-$59,999", "$60,000-$99,999", "$100,000+")), y = home_insecurity_perc)) +
+  geom_bar(stat = "identity", color = "#439381", fill = "#439381") +
+  geom_text(aes(label = scales::percent(home_insecurity_perc, accuracy = 0.1)),
+            size = 6,
+            vjust = 1.5,
+            color = "black",
+            fontface = "bold",
+            family = "Georgia") +
+  labs(title = "\nPercent of Households Experiencing\nEnergy Insecurity by Income (2020)\n",
+       caption = "\nJulia Tache | Analysis of RECS Survey Data (2020)") +
+  theme(plot.background = element_rect(fill = "#F5F5F5"),
+        panel.background = element_rect(fill = "#F5F5F5"),
+        panel.grid = element_blank(),
+        plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text (size = 12, face = "italic"),
+        axis.title = element_blank(),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        text = element_text(family = "Georgia"))
+
+ggsave("income.png", height = 5, width = 8)
 
 ```
